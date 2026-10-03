@@ -1,13 +1,17 @@
 <div align="center">
 
+<img src="docs/assets/nfc-security-banner.png" alt="NFC security research banner with a contactless smart card and protective shield" width="100%">
+
 # NFC Card and Tag Security Enhancement Framework
 ### Using Hybrid Detection
 
-**J26-CS-316 · Final Year Research Project · SLIIT**
+**Final Year Research Project · Sri Lanka Institute of Information Technology**
 
-Security profiling · Provenance fingerprinting · Integrity verification · Behavioural anomaly detection
+<img src="docs/assets/project-status.svg" alt="J26-CS-316 · Four components · SLIIT Cyber Security · Initial development" width="730">
 
-**Status: Initial development and repository setup**
+<br>
+
+[Overview](#project-overview) · [Components](#four-research-components) · [Architecture](#proposed-architecture) · [Team](#research-team) · [Progress](#project-progress) · [Proposals](#proposal-reports)
 
 </div>
 
@@ -15,59 +19,90 @@ Security profiling · Provenance fingerprinting · Integrity verification · Beh
 
 ## Project Overview
 
-This research project investigates four complementary approaches to assessing the security of NFC cards and tags. It combines security profile scoring, protocol-response provenance fingerprinting, data integrity verification, and behavioural anomaly detection within a shared framework.
+**One framework. Four complementary views of NFC security.**
 
-Each component addresses a separate research question. The planned framework will collect evidence through supported NFC readers, produce independent component results, and present those results through a unified dashboard.
+This project investigates how NFC cards and tags can be assessed through **security exposure, source behaviour, data integrity, and usage patterns**. Each component addresses an independent research question, while shared acquisition and agreed data formats support a unified review interface.
 
-> This repository is being established for implementation and experimentation. The architecture and features below describe the proposed system; they are not claims of completed functionality or validated detection accuracy.
+The planned framework helps a reviewer understand:
 
-## Research Problem
+- **How exposed is the card?** — C1 assesses protection settings and attacker capabilities.
+- **Does its source behaviour look unusual?** — C2 examines protocol-response evidence across sessions.
+- **What has changed?** — C3 compares current contents with a protected enrolled baseline.
+- **Is its usage suspicious?** — C4 combines behavioural rules with anomaly detection.
 
-Reading a card's UID or stored data does not provide a complete assessment of its security. A card may have weak protection settings, a copied identity, modified contents, or unusual usage patterns. A single check cannot resolve all of these issues.
+> **Development status:** This repository is at the initial development stage. Features, architecture, and outputs described below are proposed work. Detection accuracy and operational readiness have not yet been established.
 
-The project therefore examines four distinct questions:
+## Four Research Components
 
-1. **C1:** How exposed is the card under different attacker capabilities?
-2. **C2:** Does its protocol-response behaviour resemble an original, clone, or emulator?
-3. **C3:** Has its enrolled data or supported security state changed, and where?
-4. **C4:** Does its usage behaviour contain suspicious or previously unseen patterns?
+| | Component | Research approach | Planned output |
+|:---:|---|---|---|
+| **C1** | **NFC Security Profile Scoring Model** | Capability-aware profiling, laboratory outcomes, and time-to-compromise calibration | **0–100 security risk score**, risk category, and contributing factors |
+| **C2** | **Multi-Session Protocol-Response Provenance Fingerprinting** | Protocol-response and reader-side timing features; Random Forest, SVM, and k-NN comparison; UNKNOWN rejection | **Original-like / Clone-like / Emulator-like / UNKNOWN**, with supporting evidence |
+| **C3** | **NFC Tag Data Integrity Verification** | HMAC-protected enrollment baseline; application/NDEF, raw-memory, and supported security-state checks; integrity journal | **Integrity result**, changed fields or memory regions, and tamper localization |
+| **C4** | **NFC Hybrid Behavioural Anomaly Detection** | NFC-specific rules combined with Isolation Forest on usage-event features | **Anomaly risk score**, alert level, and explanation |
 
-## Research Components
-
-| Component | Research focus | Planned approach | Planned output |
-|---|---|---|---|
-| **C1 — Security Profile Scoring** | Assess card security exposure | Capability-aware profiling and calibration using laboratory outcomes, including time-to-compromise analysis | A 0–100 security risk score, risk category, and supporting factors |
-| **C2 — Provenance Fingerprinting** | Distinguish source behaviour across independent sessions | Protocol-response and reader-side timing features; comparison of Random Forest, SVM, and k-NN; rejection of unsupported evidence | Original-like, clone-like, emulator-like, or UNKNOWN verdict with supporting evidence |
-| **C3 — Data Integrity Verification** | Detect and localize changes relative to an enrolled baseline | HMAC-protected baseline; application/NDEF, raw-memory, and supported security-state verification; integrity journal | Verification result, affected fields or memory regions, and change evidence |
-| **C4 — Behavioural Anomaly Detection** | Identify unusual NFC usage events | NFC-specific rules combined with Isolation Forest | Anomaly risk score, alert level, and explanation |
-
-**Interpretation:** C1 measures security exposure; C2 evaluates provenance-related behaviour; C3 checks integrity; C4 assesses usage anomalies. Their outputs represent different kinds of evidence and should not be treated as interchangeable scores or definitive proof of malicious activity.
+**Interpreting the findings:** The components measure different properties. C1 and C4 scores are separate assessments; a C2 verdict or C4 alert alone does not establish malicious activity. Unavailable or unsupported evidence must remain explicit.
 
 ## Proposed Architecture
 
-| Layer | Responsibility |
+<p align="center">
+  <img src="docs/assets/framework-architecture.png" alt="Shared NFC acquisition feeds C1 security scoring, C2 provenance fingerprinting, C3 integrity verification, and C4 behavioural anomaly detection; results enter a shared backend and unified dashboard" width="100%">
+</p>
+
+**Integration principle:** Each component retains its own processing and evaluation methods. Shared schemas define inputs and versioned result records. The backend stores findings and evidence references; the dashboard presents them for review.
+
+## Research Team
+
+| Member | Student ID | Responsibility | Working branch |
+|---|---|---|:---:|
+| **Anjana I.K.D.** | IT23160620 | C1 — Security Profile Scoring | `c1` |
+| **Anulasha K.A.** | IT23139480 | C2 — Provenance Fingerprinting | `c2` |
+| **Abeykoon A.M.A.S.K.** | IT23403642 | C3 — Data Integrity Verification | `c3` |
+| **Perera L.M.D.** | IT23404182 | C4 — Behavioural Anomaly Detection | `c4` |
+
+The team coordinates shared reader acquisition, data definitions, backend services, dashboard development, and integration testing.
+
+## Project Progress
+
+| Milestone | Current position |
 |---|---|
-| **Shared acquisition** | Collect supported card, protocol, session, and event evidence using reader-specific adapters |
-| **Independent components** | Run C1–C4 processing with separate configurations and evaluation methods |
-| **Shared backend** | Store versioned component results and relevant evidence references |
-| **Unified dashboard** | Present individual findings, limitations, and evidence for review |
+| Research scope and component proposals | Four reports available below |
+| GitHub repository | Created |
+| Shared folder structure and component branches | Being established |
+| C2 preliminary Flipper Zero feasibility experiments | Planned |
+| Proxmark3 RDV2 | Awaiting delivery |
+| Component implementation and experimental evaluation | Upcoming |
+| Shared backend and unified dashboard | Planned |
 
-Integration is planned around agreed data schemas and versioned result records. Reader capabilities, card family, session conditions, and unavailable measurements must remain explicit.
+*Update this table as milestones are completed. Link experimental evidence and reviewable changes when available.*
 
-## Team and Responsibilities
+## Proposal Reports
 
-| Member | Student ID | Component | Working branch |
-|---|---|---|---|
-| Anjana I.K.D. | IT23160620 | C1 — Security Profile Scoring | `c1` |
-| Anulasha K.A. | IT23139480 | C2 — Provenance Fingerprinting | `c2` |
-| Abeykoon A.M.A.S.K. | IT23403642 | C3 — Data Integrity Verification | `c3` |
-| Perera L.M.D. | IT23404182 | C4 — Behavioural Anomaly Detection | `c4` |
+| Component | Report |
+|:---:|---|
+| **C1** | [Security Profile Scoring — IT23160620](docs/proposals/C1_IT23160620.pdf) |
+| **C2** | [Provenance Fingerprinting — IT23139480](docs/proposals/C2_IT23139480.pdf) |
+| **C3** | [Data Integrity Verification — IT23403642](docs/proposals/C3_IT23403642.pdf) |
+| **C4** | [Behavioural Anomaly Detection — IT23404182](docs/proposals/C4_IT23404182.pdf) |
 
-Shared acquisition, interface definitions, backend integration, dashboard development, and integration testing are coordinated group responsibilities.
+## Repository Guide
 
-## Planned Repository Structure
+The table describes the planned implementation structure. Component folders will be populated as development proceeds.
 
-The following folders are the agreed starting structure and will be populated during development.
+| Location | Purpose |
+|---|---|
+| `components/c1_security_scoring/` | Card profiling, calibration, and security risk scoring |
+| `components/c2_provenance/` | Session collection, features, data splits, models, and UNKNOWN rejection |
+| `components/c3_integrity/` | Enrollment, baseline protection, comparison, localization, and journal |
+| `components/c4_anomaly_detection/` | Event features, rules, Isolation Forest, and hybrid decisions |
+| `shared/` | Reader adapters, schemas, and common utilities |
+| `backend/` · `dashboard/` | Result storage and unified review interface |
+| `data/` · `models/` · `results/` | Dataset organization, model artifacts, and evaluation evidence |
+| `docs/` | Proposal reports, setup notes, architecture, protocols, and visual assets |
+| `tests/` · `scripts/` | Integration checks and development utilities |
+
+<details>
+<summary><strong>View the planned folder structure</strong></summary>
 
 ```text
 J26-CS-316/
@@ -90,6 +125,7 @@ J26-CS-316/
     backend/
     dashboard/
     docs/
+        assets/
         proposals/
     data/
         samples/
@@ -112,81 +148,59 @@ J26-CS-316/
         run/
 ```
 
-| Folder | Contents |
-|---|---|
-| `components/` | Component source code, configuration, notebooks where needed, and component tests |
-| `shared/` | Reader adapters, common utilities, and agreed input/output schemas |
-| `backend/` | Shared result storage and service interfaces |
-| `dashboard/` | Unified review interface |
-| `docs/` | Proposals, architecture, setup instructions, protocols, and data definitions |
-| `data/` | Small shareable examples and local dataset organization |
-| `models/` | Model documentation and approved model artifacts |
-| `results/` | Evaluation summaries, figures, and reproducibility records |
-| `tests/` | Cross-component integration checks |
-| `scripts/` | Setup and execution utilities |
-
-## Development Workflow — GitHub Desktop
-
-- **`main`** holds reviewed work and the integrated project.
-- **`c1`, `c2`, `c3`, and `c4`** are component working branches created from `main`.
-- Every branch starts with the same repository structure. Branches are Git versions, not separate folders.
-- Members select their component branch in GitHub Desktop before editing, then commit and push their changes.
-- Integration uses a pull request targeting `main`. The request should explain the change, any shared-interface changes, and the validation performed.
-- After shared work is merged, members update their working branches from `main` before continuing.
-
-Each component README should document its purpose, required inputs, output format, dependencies, execution steps, and evaluation procedure.
+</details>
 
 ## Hardware and Software Plan
 
 | Resource | Intended role |
 |---|---|
-| Proxmark3 RDV2 | Research-reader acquisition and supported protocol/timing experiments |
-| Flipper Zero | Supported NFC reading, preliminary acquisition experiments, and authorized emulation |
-| NFC-enabled smartphone | Supported profile observations and capability-tier experiments |
-| Project-owned NFC cards and tags | Controlled experiments with documented card families and configurations |
-| Python, pandas, NumPy, scikit-learn | Data processing, modelling, and evaluation |
-| Jupyter notebooks | Exploratory analysis and experiment documentation |
-| GitHub and GitHub Desktop | Collaboration, version history, and review |
+| **Proxmark3 RDV2** | Supported protocol and timing experiments with a research reader |
+| **Flipper Zero** | Supported NFC reads, acquisition feasibility experiments, and authorized emulation |
+| **NFC-enabled smartphone** | Supported card observations and capability-tier experiments |
+| **Project-owned NFC cards and tags** | Controlled experiments with documented families and configurations |
+| **Python · pandas · NumPy · scikit-learn** | Data processing, modelling, and evaluation |
+| **Jupyter notebooks** | Exploratory analysis and experiment documentation |
+| **GitHub · GitHub Desktop** | Version history, collaboration, and review |
 
-Backend and dashboard implementation choices will be documented when selected. Reader-specific capabilities must be validated before using measurements as research evidence.
+Reader capabilities must be validated before measurements are used as research evidence. Backend and dashboard technology choices will be documented when selected.
 
-## Evaluation and Reproducibility
+## Experimental Evaluation
 
-- **C1:** Evaluate calibration against laboratory outcomes and attacker capability tiers.
-- **C2:** Separate physical sources and sessions appropriately between training and evaluation; report clone discrimination, false acceptance, UNKNOWN behaviour, and emulator results separately.
-- **C3:** Evaluate change detection, tamper localization, journal verification, and behaviour when evidence is unavailable.
-- **C4:** Evaluate rules, Isolation Forest, and their combination using precision, recall, F1, false-positive rate, and unseen-anomaly experiments.
+| Component | Evaluation focus |
+|:---:|---|
+| **C1** | Calibration against laboratory outcomes and attacker capability tiers |
+| **C2** | Physical-source and session separation; clone discrimination, false acceptance, cross-session stability, UNKNOWN rejection, and separate emulator reporting |
+| **C3** | Change detection, tamper localization, integrity-journal verification, and unavailable evidence |
+| **C4** | Rules and model baselines; precision, recall, F1, false-positive rate, and unseen-anomaly detection |
 
-Experimental records should identify card family, source ID, session ID, reader and firmware version, acquisition settings, dataset version, and evaluation split. Report measured results with their limitations; do not present example dashboard values as experimental findings.
+Records should identify **card family, source ID, session ID, reader/firmware version, acquisition conditions, dataset version, and evaluation split**. Example interface values must remain distinguishable from measured results.
 
-## Current Status and Next Milestones
+## Collaboration
 
-| Item | Status |
-|---|---|
-| Four component proposal reports | Available |
-| GitHub repository | Created |
-| Shared folder structure and component branches | Being established |
-| C2 preliminary Flipper Zero feasibility work | Planned before Proxmark3 acquisition |
-| Proxmark3 RDV2 | Awaiting delivery |
-| Component implementation, training, and evaluation | Upcoming |
-| Backend and unified dashboard integration | Planned |
+**`main`** contains reviewed and integrated work. **`c1`–`c4`** are component working branches, each starting from the same complete repository structure.
 
-Update this table as work is completed and link measured results from the relevant component documentation.
+1. Select the relevant component branch in GitHub Desktop before editing.
+2. Commit and push a focused change with a clear description.
+3. Open a pull request targeting `main`; describe the behaviour, validation, and shared-interface changes.
+4. After integration, update the working branches from `main`.
 
-## Data Handling and Research Scope
+Each component README should explain its inputs, outputs, dependencies, execution steps, and evaluation procedure.
 
-Experiments are limited to project-owned or explicitly authorized cards and laboratory equipment. The framework is a research prototype and is not approved for production access-control decisions.
+<details>
+<summary><strong>Research scope and data handling</strong></summary>
 
-Commit small sanitized examples and documentation. Keep secret keys, credentials, private card dumps, protected integrity baselines, and sensitive raw captures outside the repository. Large datasets and generated artifacts should use an appropriate external storage location, with versions and retrieval instructions documented when shareable.
+Experiments are limited to project-owned or explicitly authorized cards and laboratory equipment. The framework is a research prototype; production access-control use has not been validated.
 
-## Guide for Supervisors and Reviewers
+Commit small sanitized examples and documentation. Store secret keys, credentials, sensitive card dumps, protected baselines, and private raw captures outside the repository. Document dataset and model versions, and use appropriate storage for large artifacts.
 
-1. Review the component overview and team responsibility table above.
-2. Read proposal reports in `docs/proposals/` once added.
-3. Inspect the relevant component README and working branch for implementation progress.
-4. Review shared schemas and integration decisions in `shared/` and `docs/`.
-5. Review evaluation summaries in `results/` as experiments become available.
+</details>
 
 ---
 
-**J26-CS-316 · NFC Card and Tag Security Enhancement Framework Using Hybrid Detection**
+<div align="center">
+
+**J26-CS-316 · SLIIT · Cyber Security Research**
+
+*Independent research components. Shared evidence. Clear review.*
+
+</div>

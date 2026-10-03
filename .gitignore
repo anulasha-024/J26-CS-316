@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+# Secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+# Local datasets and model artifacts
+/data/raw/**
+!/data/raw/.gitkeep
+/data/processed/**
+!/data/processed/.gitkeep
+/data/splits/**
+!/data/splits/.gitkeep
+/models/c*/**
+!/models/c*/.gitkeep
+/results/c*/**
+!/results/c*/.gitkeep
+# Protected baselines and device dumps
+private/
+*.nfc
+*.dump
+# Generated and local files
+*.log
+node_modules/
+dist/
+build/
+.DS_Store
+Thumbs.db

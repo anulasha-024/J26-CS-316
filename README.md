@@ -25,10 +25,10 @@ This project investigates how NFC cards and tags can be assessed through **secur
 
 The planned framework helps a reviewer understand:
 
-- **How exposed is the card?** — C1 assesses protection settings and attacker capabilities.
-- **Does its source behaviour look unusual?** — C2 examines protocol-response evidence across sessions.
-- **What has changed?** — C3 compares current contents with a protected enrolled baseline.
-- **Is its usage suspicious?** — C4 combines behavioural rules with anomaly detection.
+- **How exposed is the card?** - C1 assesses protection settings and attacker capabilities.
+- **Does its source behaviour look unusual?** - C2 examines protocol-response evidence across sessions.
+- **What has changed?** - C3 compares current contents with a protected enrolled baseline.
+- **Is its usage suspicious?** - C4 combines behavioural rules with anomaly detection.
 
 > **Development status:** This repository is at the initial development stage. Features, architecture, and outputs described below are proposed work. Detection accuracy and operational readiness have not yet been established.
 

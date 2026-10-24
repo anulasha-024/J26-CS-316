@@ -1,33 +1,29 @@
-# Python
+# Python environments and generated files
 __pycache__/
 *.py[cod]
 .venv/
 venv/
 .pytest_cache/
 .ipynb_checkpoints/
-# Secrets
+
+# Local secrets
 .env
 .env.*
 !.env.example
 *.key
 *.pem
-# Local datasets and model artifacts
-/data/raw/**
-!/data/raw/.gitkeep
-/data/processed/**
-!/data/processed/.gitkeep
-/data/splits/**
-!/data/splits/.gitkeep
-/models/c*/**
-!/models/c*/.gitkeep
-/results/c*/**
-!/results/c*/.gitkeep
-# Protected baselines and device dumps
+
+# Local component datasets and generated artifacts
+/c[1-4]/data/
+/c[1-4]/models/
+/c[1-4]/results/
+/c[1-4]/private/
 private/
 *.nfc
 *.dump
-# Generated and local files
 *.log
+
+# Local build and operating system files
 node_modules/
 dist/
 build/

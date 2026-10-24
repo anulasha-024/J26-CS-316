@@ -1,0 +1,10 @@
+card_id,tier,repeat_no,before_value,after_value,verified_modification_time_s,read_success,write_success,readback_success,modification_verified,censored,attempts,measurement_method
+NTAG215_01,T2,5,5F 30 34 FE,5F 30 35 FE,0.0869,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_01,T2,6,5F 30 35 FE,5F 30 36 FE,0.0857,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_02,T2,1,5F 30 31 FE,5F 30 32 FE,0.0992,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_02,T2,2,5F 30 32 FE,5F 30 33 FE,0.0877,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_02,T2,3,5F 30 33 FE,5F 30 34 FE,0.1068,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_02,T2,4,5F 30 34 FE,5F 30 35 FE,0.0837,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_02,T2,5,5F 30 35 FE,5F 30 36 FE,0.0865,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_01,T2,7,5F 30 36 FE,5F 30 37 FE,0.0868,1,1,1,1,0,1,host-assisted-verified-readback
+NTAG215_01,T2,8,5F 30 37 FE,5F 30 38 FE,0.0844,1,1,1,1,0,1,host-assisted-verified-readback

@@ -1,0 +1,4 @@
+﻿trial_id,card_id,planned_auth0,scenario,attacker_tier,outcome,event_observed,right_censored,ttc_seconds,evidence_path,status,trial_role,observed_auth0,observation_window_seconds,measurement_method,stop_reason,analysis_eligible
+EXP02-T01,NTAG215_02,04,Unauthenticated write attempt 1,,,,,,,PLANNED,ATTACK,,,,,NO
+EXP02-T02,NTAG215_02,04,Unauthenticated write attempt 2,,,,,,,PLANNED,ATTACK,,,,,NO
+EXP02-T03,NTAG215_02,04,Authorized write control,,,,,,,PLANNED,CONTROL,,,,,NO

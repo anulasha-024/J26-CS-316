@@ -1,0 +1,2 @@
+﻿observation_id,card_id,uid,tag_type,auth0,prot,password_configured,password_enforced,write_protected,read_protected,security_profile,observed_at_utc,evidence_path,evidence_sha256,cox_analysis_eligible
+EXP02-PRE-001,NTAG215_02,04A3C090310289,NTAG215,FF,0,YES,NO,NO,NO,PRE_PROTECTION,2026-10-23T16:12:28.130559+00:00,results\Reports\EXP02_Live_Factor_Snapshot.json,44b487c1116dd1502a31f9ba191d027f157c98a525f998f60803db4ceb01e795,NO

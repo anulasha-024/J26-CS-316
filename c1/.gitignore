@@ -1,0 +1,19 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime live scan status
+python/live_card_status.json
+
+# Script cache
+python/scripts/__pycache__/
+
+# Synthetic demo-only data
+python/DEMO_ONLY_DO_NOT_USE/
+
+# OS temporary files
+.DS_Store
+Thumbs.db
+python/scripts/demo_pipeline_test.py
+python/scripts/generate_demo_data.py

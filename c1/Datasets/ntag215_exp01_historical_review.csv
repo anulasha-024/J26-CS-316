@@ -1,0 +1,5 @@
+"candidate_experiment","config_id","repeat_no","compromised","ttc_seconds","censored","review_status"
+"EXP-01","NTAG215_01_BASELINE","1","","","","INCOMPLETE_NOT_CENSORED"
+"EXP-01","NTAG215_01_BASELINE","2","1","24.3","0","RECORDED_EVENT_REVIEW_REQUIRED"
+"EXP-01","NTAG215_01_BASELINE","3","1","15.18","0","RECORDED_EVENT_REVIEW_REQUIRED"
+"EXP-01","NTAG215_02_BASELINE","1","","","","INCOMPLETE_NOT_CENSORED"

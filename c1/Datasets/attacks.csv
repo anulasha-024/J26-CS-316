@@ -1,0 +1,5 @@
+config_id,tier,repeat_no,read_success,write_success,emulation_success,compromised,time_to_compromise,censored,attempts,tool_version,timestamp,notes
+NTAG215_01_BASELINE,T2,1,1,1,,,,,1,Flipper Zero / Firmware 1.4.3,2026-10-07T12:14:36,"NTAG215 real test - read successful, NDEF write successful and read-back verified; emulation and compromise not tested."
+NTAG215_01_BASELINE,T2,2,1,1,,1,24.3,0,1,Flipper Zero / Firmware 1.4.3,2026-10-08T13:38:27,T2 Repeat 2 - NTAG215 NDEF modified without authentication and N1_test_02 verified by read-back.
+NTAG215_01_BASELINE,T2,3,1,1,,1,15.18,0,1,Flipper Zero / Firmware 1.4.3,2026-10-09T11:24:50,T2 Repeat 3 - NTAG215 NDEF modified without authentication and N1_test_03 verified by read-back.
+NTAG215_02_BASELINE,T2,1,1,1,,,,,1,Flipper Zero Firmware 1.4.3,2026-10-17T11:39:27,T2 Flipper Zero test; read successful and controlled write verified by read-back. Emulation not tested. Compromise status not assigned. Automated verified modification timing recorded separately.

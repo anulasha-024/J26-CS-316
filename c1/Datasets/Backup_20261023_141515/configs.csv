@@ -1,0 +1,5 @@
+config_id,family,card_instance,uid_type,uid_writable,auth_type,default_key_present,lock_state,ndef_protection,cve_flag,otp_set
+NTAG215_01_BASELINE,NTAG215,NTAG215_01,7-byte,Fixed UID,No authentication,Not Applicable,UNLOCKED,UNPROTECTED,No known CVE,UNKNOWN
+NTAG215_02_BASELINE,NTAG215,NTAG215_02,7-byte,Not writable,No authentication,Not Applicable,UNLOCKED,UNPROTECTED,UNKNOWN,UNKNOWN
+MIFARE1K_01_BASELINE,MIFARE Classic 1K,MIFARE1K_01,4-byte,UNKNOWN,MIFARE Classic Crypto1,YES,UNLOCKED,Not Applicable,UNKNOWN,Not Applicable
+MIFARE1K_02_BASELINE,MIFARE Classic 1K,MIFARE1K_02,4-byte,UNKNOWN,MIFARE Classic Crypto1,YES,UNLOCKED,Not Applicable,UNKNOWN,Not Applicable

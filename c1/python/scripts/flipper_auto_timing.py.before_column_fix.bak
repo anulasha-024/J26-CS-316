@@ -1,0 +1,881 @@
+﻿from pathlib import Path
+import csv
+import re
+import time
+
+import serial
+
+
+# ============================================================
+# N1 - FLIPPER ZERO AUTOMATED VERIFIED MODIFICATION TIMING
+# ============================================================
+
+PORT = "COM3"
+BAUD = 115200
+
+CARD_ID = "NTAG215_01"
+TIER = "T2"
+REPEAT_NO = 8
+
+BLOCK = 8
+
+# Current Block 8 = N1_test_06
+EXPECTED_BEFORE = "5F 30 37 FE"
+
+# New Block 8 = N1_test_07
+NEW_DATA_COMMAND = "5F3038FE"
+EXPECTED_AFTER = "5F 30 38 FE"
+
+
+# ============================================================
+# PATHS
+# ============================================================
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATASET_DIR = PROJECT_ROOT / "Datasets"
+TIMING_FILE = DATASET_DIR / "automated_timing.csv"
+
+DATASET_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
+
+
+# ============================================================
+# CSV COLUMNS
+# ============================================================
+
+CSV_FIELDS = [
+    "card_id",
+    "tier",
+    "repeat_no",
+    "before_value",
+    "after_value",
+    "verified_modification_time_s",
+    "read_success",
+    "write_success",
+    "readback_success",
+    "modification_verified",
+    "censored",
+    "attempts",
+    "timing_method",
+]
+
+
+# ============================================================
+# REMOVE ANSI / CONTROL CHARACTERS
+# ============================================================
+
+ANSI_ESCAPE = re.compile(
+    rb"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])"
+)
+
+
+def strip_ansi(text):
+
+    if isinstance(text, bytes):
+
+        text = ANSI_ESCAPE.sub(
+            b"",
+            text,
+        ).decode(
+            errors="ignore"
+        )
+
+    else:
+
+        text = re.sub(
+            r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])",
+            "",
+            text,
+        )
+
+    return text.replace(
+        "\r",
+        "",
+    )
+
+
+# ============================================================
+# READ AVAILABLE SERIAL OUTPUT
+# ============================================================
+
+def collect_serial_output(
+    ser,
+    timeout=1.0,
+):
+
+    start_time = time.perf_counter()
+    received = b""
+
+    while (
+        time.perf_counter()
+        - start_time
+        < timeout
+    ):
+
+        if ser.in_waiting:
+
+            received += ser.read(
+                ser.in_waiting
+            )
+
+        time.sleep(0.01)
+
+    text = received.decode(
+        errors="ignore"
+    )
+
+    return strip_ansi(text)
+
+
+# ============================================================
+# READ UNTIL PROMPT
+# ============================================================
+
+def read_until_prompt(
+    ser,
+    prompt,
+    timeout=5.0,
+):
+
+    start_time = time.perf_counter()
+    received = b""
+
+    while (
+        time.perf_counter()
+        - start_time
+        < timeout
+    ):
+
+        if ser.in_waiting:
+
+            received += ser.read(
+                ser.in_waiting
+            )
+
+            text = strip_ansi(
+                received
+            )
+
+            if prompt in text:
+
+                return text
+
+        time.sleep(0.01)
+
+    return strip_ansi(
+        received
+    )
+
+
+# ============================================================
+# SEND NFC COMMAND
+# ============================================================
+
+def send_nfc_command(
+    ser,
+    command,
+    timeout=5.0,
+):
+
+    ser.reset_input_buffer()
+
+    ser.write(
+        (
+            command
+            + "\r"
+        ).encode()
+    )
+
+    ser.flush()
+
+    return read_until_prompt(
+        ser,
+        "[nfc]>:",
+        timeout,
+    )
+
+
+# ============================================================
+# EXTRACT BLOCK DATA
+# ============================================================
+
+def extract_block_data(
+    output,
+    block_number,
+):
+
+    pattern = (
+        rf"Block:\s*{block_number}"
+        rf"\s*Data:\s*"
+        rf"([0-9A-Fa-f]{{2}})\s+"
+        rf"([0-9A-Fa-f]{{2}})\s+"
+        rf"([0-9A-Fa-f]{{2}})\s+"
+        rf"([0-9A-Fa-f]{{2}})"
+    )
+
+    match = re.search(
+        pattern,
+        output,
+        re.IGNORECASE,
+    )
+
+    if not match:
+
+        alternative_pattern = (
+            rf"Block\s*{block_number}"
+            rf"\s*:\s*"
+            rf"([0-9A-Fa-f]{{2}})\s+"
+            rf"([0-9A-Fa-f]{{2}})\s+"
+            rf"([0-9A-Fa-f]{{2}})\s+"
+            rf"([0-9A-Fa-f]{{2}})"
+        )
+
+        match = re.search(
+            alternative_pattern,
+            output,
+            re.IGNORECASE,
+        )
+
+    if not match:
+
+        return None
+
+    values = [
+        value.upper()
+        for value in match.groups()
+    ]
+
+    return " ".join(values)
+
+
+# ============================================================
+# DUPLICATE CHECK
+# ============================================================
+
+def trial_already_exists():
+
+    if not TIMING_FILE.exists():
+        return False
+
+    try:
+
+        with open(
+            TIMING_FILE,
+            "r",
+            newline="",
+            encoding="utf-8",
+        ) as file:
+
+            reader = csv.DictReader(file)
+
+            for row in reader:
+
+                if (
+                    row.get("card_id") == CARD_ID
+                    and
+                    str(row.get("repeat_no"))
+                    == str(REPEAT_NO)
+                ):
+
+                    return True
+
+    except Exception:
+
+        return False
+
+    return False
+
+
+# ============================================================
+# ENSURE CSV ENDS WITH NEWLINE
+# ============================================================
+
+def ensure_csv_newline():
+
+    if not TIMING_FILE.exists():
+        return
+
+    if TIMING_FILE.stat().st_size == 0:
+        return
+
+    with open(
+        TIMING_FILE,
+        "rb",
+    ) as file:
+
+        data = file.read()
+
+    if not data.endswith(
+        (
+            b"\n",
+            b"\r",
+        )
+    ):
+
+        with open(
+            TIMING_FILE,
+            "ab",
+        ) as file:
+
+            file.write(
+                b"\n"
+            )
+
+
+# ============================================================
+# SAVE VERIFIED TIMING RESULT
+# ============================================================
+
+def save_timing_result(
+    elapsed,
+):
+
+    ensure_csv_newline()
+
+    file_exists = (
+        TIMING_FILE.exists()
+        and
+        TIMING_FILE.stat().st_size > 0
+    )
+
+    row = {
+        "card_id": CARD_ID,
+        "tier": TIER,
+        "repeat_no": REPEAT_NO,
+        "before_value": EXPECTED_BEFORE,
+        "after_value": EXPECTED_AFTER,
+        "verified_modification_time_s": (
+            f"{elapsed:.4f}"
+        ),
+        "read_success": 1,
+        "write_success": 1,
+        "readback_success": 1,
+        "modification_verified": 1,
+        "censored": 0,
+        "attempts": 1,
+        "timing_method": (
+            "host-assisted-verified-readback"
+        ),
+    }
+
+    with open(
+        TIMING_FILE,
+        "a",
+        newline="",
+        encoding="utf-8",
+    ) as file:
+
+        writer = csv.DictWriter(
+            file,
+            fieldnames=CSV_FIELDS,
+            lineterminator="\n",
+        )
+
+        if not file_exists:
+
+            writer.writeheader()
+
+        writer.writerow(row)
+
+    print()
+    print(
+        "TIMING RESULT SAVED"
+    )
+
+    print(
+        f"Saved to: {TIMING_FILE}"
+    )
+
+
+# ============================================================
+# MAIN TEST
+# ============================================================
+
+def main():
+
+    print()
+
+    print(
+        "N1 FLIPPER ZERO "
+        "AUTOMATED TIMING TEST"
+    )
+
+    print(
+        "=" * 55
+    )
+
+    print(
+        f"Card ID       : {CARD_ID}"
+    )
+
+    print(
+        f"Tier          : {TIER}"
+    )
+
+    print(
+        f"Repeat        : {REPEAT_NO}"
+    )
+
+    print(
+        f"Block         : {BLOCK}"
+    )
+
+    print(
+        f"Expected now  : {EXPECTED_BEFORE}"
+    )
+
+    print(
+        f"Target value  : {EXPECTED_AFTER}"
+    )
+
+    print(
+        "=" * 55
+    )
+
+    print()
+
+    # --------------------------------------------------------
+    # DUPLICATE SAFETY CHECK
+    # --------------------------------------------------------
+
+    if trial_already_exists():
+
+        print(
+            "WARNING:"
+        )
+
+        print(
+            f"{CARD_ID} Repeat "
+            f"{REPEAT_NO} already exists "
+            "in automated_timing.csv."
+        )
+
+        print()
+
+        print(
+            "Test stopped to avoid "
+            "duplicate research data."
+        )
+
+        return
+
+    try:
+
+        with serial.Serial(
+            PORT,
+            BAUD,
+            timeout=0.1,
+        ) as ser:
+
+            time.sleep(1.0)
+
+            # ------------------------------------------------
+            # CLEAR INITIAL OUTPUT
+            # ------------------------------------------------
+
+            collect_serial_output(
+                ser,
+                timeout=0.5,
+            )
+
+            # ------------------------------------------------
+            # ENTER NFC CLI
+            # ------------------------------------------------
+
+            print(
+                "Entering NFC CLI..."
+            )
+
+            ser.reset_input_buffer()
+
+            ser.write(
+                b"nfc\r"
+            )
+
+            ser.flush()
+
+            nfc_enter_output = (
+                read_until_prompt(
+                    ser,
+                    "[nfc]>:",
+                    timeout=5.0,
+                )
+            )
+
+            if (
+                "[nfc]>:"
+                not in
+                nfc_enter_output
+            ):
+
+                print(
+                    "ERROR:"
+                )
+
+                print(
+                    "Could not enter NFC CLI."
+                )
+
+                return
+
+            print(
+                "NFC CLI ready."
+            )
+
+            print()
+
+            # ------------------------------------------------
+            # UID SAFETY CHECK - READ ONLY
+            expected_uid = "040372A0310289"
+            uid_pages = {}
+
+            for page_number in (0, 1, 2):
+                response = send_nfc_command(
+                    ser,
+                    f"mfu rdbl -b {page_number}",
+                    timeout=5.0,
+                )
+
+                page_data = extract_block_data(
+                    response,
+                    page_number,
+                )
+
+                if page_data is None:
+                    print("UID SAFETY CHECK FAILED")
+                    print("Cannot read UID memory.")
+                    print("NO WRITE WAS PERFORMED.")
+                    return
+
+                uid_pages[page_number] = bytes.fromhex(page_data)
+
+            actual_uid = (
+                uid_pages[0][:3] + uid_pages[1]
+            ).hex().upper()
+
+            bcc0 = (
+                0x88
+                ^ uid_pages[0][0]
+                ^ uid_pages[0][1]
+                ^ uid_pages[0][2]
+            )
+
+            bcc1 = (
+                uid_pages[1][0]
+                ^ uid_pages[1][1]
+                ^ uid_pages[1][2]
+                ^ uid_pages[1][3]
+            )
+
+            if (
+                actual_uid != expected_uid
+                or uid_pages[0][3] != bcc0
+                or uid_pages[2][0] != bcc1
+            ):
+                print("UID SAFETY CHECK FAILED")
+                print(f"Expected: {expected_uid}")
+                print(f"Detected: {actual_uid}")
+                print("NO WRITE WAS PERFORMED.")
+                return
+
+            print(f"UID SAFETY CHECK PASSED: {actual_uid}")
+
+            # READ CURRENT BLOCK
+            # ------------------------------------------------
+
+            print(
+                f"Reading Block {BLOCK}..."
+            )
+
+            before_output = (
+                send_nfc_command(
+                    ser,
+                    (
+                        f"mfu rdbl "
+                        f"-b {BLOCK}"
+                    ),
+                    timeout=5.0,
+                )
+            )
+
+            before_data = (
+                extract_block_data(
+                    before_output,
+                    BLOCK,
+                )
+            )
+
+            if before_data is None:
+
+                print(
+                    "READ FAILED"
+                )
+
+                print(
+                    before_output
+                )
+
+                return
+
+            print(
+                f"Current value: {before_data}"
+            )
+
+            # ------------------------------------------------
+            # PRE-WRITE SAFETY CHECK
+            # ------------------------------------------------
+
+            if (
+                before_data
+                !=
+                EXPECTED_BEFORE
+            ):
+
+                print()
+
+                print(
+                    "SAFETY CHECK FAILED"
+                )
+
+                print(
+                    "Card/block does not contain "
+                    "the expected current value."
+                )
+
+                print(
+                    f"Expected: {EXPECTED_BEFORE}"
+                )
+
+                print(
+                    f"Received: {before_data}"
+                )
+
+                print()
+
+                print(
+                    "NO WRITE WAS PERFORMED."
+                )
+
+                return
+
+            print(
+                "Pre-write safety check: PASS"
+            )
+
+            print()
+
+            # ------------------------------------------------
+            # START TIMER
+            # ------------------------------------------------
+
+            start_time = (
+                time.perf_counter()
+            )
+
+            # ------------------------------------------------
+            # WRITE
+            # ------------------------------------------------
+
+            send_nfc_command(
+                ser,
+                (
+                    f"mfu wrbl "
+                    f"-b {BLOCK} "
+                    f"-d {NEW_DATA_COMMAND}"
+                ),
+                timeout=5.0,
+            )
+
+            # ------------------------------------------------
+            # READ BACK
+            # ------------------------------------------------
+
+            after_output = (
+                send_nfc_command(
+                    ser,
+                    (
+                        f"mfu rdbl "
+                        f"-b {BLOCK}"
+                    ),
+                    timeout=5.0,
+                )
+            )
+
+            after_data = (
+                extract_block_data(
+                    after_output,
+                    BLOCK,
+                )
+            )
+
+            # ------------------------------------------------
+            # VERIFY
+            # ------------------------------------------------
+
+            if (
+                after_data
+                ==
+                EXPECTED_AFTER
+            ):
+
+                end_time = (
+                    time.perf_counter()
+                )
+
+                elapsed = (
+                    end_time
+                    - start_time
+                )
+
+                print(
+                    "VERIFICATION SUCCESS"
+                )
+
+                print(
+                    f"Card: {CARD_ID}"
+                )
+
+                print(
+                    f"Repeat: {REPEAT_NO}"
+                )
+
+                print(
+                    f"Before write: "
+                    f"{EXPECTED_BEFORE}"
+                )
+
+                print(
+                    f"After write: "
+                    f"{after_data}"
+                )
+
+                print()
+
+                print(
+                    "Automated verified "
+                    "modification time: "
+                    f"{elapsed:.4f} seconds"
+                )
+
+                print()
+
+                print(
+                    "Result:"
+                )
+
+                print(
+                    "Read success: 1"
+                )
+
+                print(
+                    "Write success: 1"
+                )
+
+                print(
+                    "Read-back success: 1"
+                )
+
+                print(
+                    "Modification verified: 1"
+                )
+
+                print(
+                    "Censored: 0"
+                )
+
+                print(
+                    "Attempts: 1"
+                )
+
+                save_timing_result(
+                    elapsed
+                )
+
+            else:
+
+                end_time = (
+                    time.perf_counter()
+                )
+
+                elapsed = (
+                    end_time
+                    - start_time
+                )
+
+                print(
+                    "VERIFICATION FAILED"
+                )
+
+                print(
+                    f"Expected: "
+                    f"{EXPECTED_AFTER}"
+                )
+
+                print(
+                    f"Received: "
+                    f"{after_data}"
+                )
+
+                print()
+
+                print(
+                    "Elapsed time before failure: "
+                    f"{elapsed:.4f} seconds"
+                )
+
+                print()
+
+                print(
+                    "FAILED RESULT WAS NOT "
+                    "ADDED AS A VERIFIED "
+                    "MODIFICATION TRIAL."
+                )
+
+            # ------------------------------------------------
+            # EXIT NFC CLI
+            # ------------------------------------------------
+
+            try:
+
+                send_nfc_command(
+                    ser,
+                    "exit",
+                    timeout=2.0,
+                )
+
+            except Exception:
+
+                pass
+
+    except serial.SerialException as error:
+
+        print()
+
+        print(
+            "SERIAL ERROR:"
+        )
+
+        print(
+            error
+        )
+
+        print()
+
+        print(
+            "Check that Flipper Lab "
+            "and Miniterm are closed "
+            "and COM3 is available."
+        )
+
+
+# ============================================================
+# START
+# ============================================================
+
+if __name__ == "__main__":
+
+    main()
+
+

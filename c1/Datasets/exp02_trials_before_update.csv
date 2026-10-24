@@ -1,0 +1,4 @@
+"trial_id","card_id","planned_auth0","scenario","attacker_tier","outcome","event_observed","right_censored","ttc_seconds","evidence_path","status"
+"EXP02-T01","NTAG215_02","04","Unauthenticated write attempt 1","","","","","","","PLANNED"
+"EXP02-T02","NTAG215_02","04","Unauthenticated write attempt 2","","","","","","","PLANNED"
+"EXP02-T03","NTAG215_02","04","Authorized write control","","","","","","","PLANNED"

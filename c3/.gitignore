@@ -1,0 +1,35 @@
+# Python generated files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# N3 secrets - NEVER commit
+secrets/
+
+# N3 generated databases
+database/
+
+# N3 generated verification reports
+reports/
+
+# Trusted NFC baselines
+baselines/
+
+# NFC acquisition / test data
+data/
+
+# Local development backup files
+src/scan_watcher_before_*.py
+
+# VS Code local settings
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,7 @@
+[33m8b119da[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Complete N3 dashboard navigation history audit and statistics UI
+[33m793155d[m Implement baseline management audit and statistics APIs
+[33m1799814[m Improve Flipper USB acquisition and NFC verification workflow
+[33mcba2f41[m Add Flipper USB acquisition dashboard and unknown card handling
+[33me8dd1f1[m Add active trusted baseline selection and rollback support
+[33mdcf0607[m Add MIFARE Classic 1K verification and tamper localization
+[33mac59aa3[m Complete NTAG215 core verification with standardized evidence handling

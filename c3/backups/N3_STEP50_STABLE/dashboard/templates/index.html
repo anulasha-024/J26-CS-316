@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        N3 - NFC Tag Data Integrity Verification
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-shell">
+
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                N3
+            </div>
+
+            <div>
+                <h2>N3_TIVE</h2>
+                <p>NFC Integrity Verification</p>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <button class="nav-item active">
+                Dashboard
+            </button>
+
+            <button class="nav-item">
+                Scan History
+            </button>
+
+            <button class="nav-item">
+                Baseline Management
+            </button>
+
+            <button class="nav-item">
+                Journal &amp; Audit
+            </button>
+
+            <button class="nav-item">
+                Statistics
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <span class="status-dot"></span>
+
+            <span>
+                N3 System Online
+            </span>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="main-content">
+
+
+        <!-- ======================================
+             HEADER
+        ======================================= -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>
+                    N3
+                    <span>
+                        NFC Tag Data Integrity Verification
+                    </span>
+                </h1>
+
+                <p>
+                    Multi-layer integrity verification
+                    and tamper localization
+                </p>
+
+            </div>
+
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                <span>
+                    System Running
+                </span>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ======================================
+             LATEST SCAN PANEL
+        ======================================= -->
+
+        <section class="panel latest-panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2>
+                        Latest Scan Result
+                    </h2>
+
+                    <span class="live-badge">
+                        LIVE
+                    </span>
+
+                </div>
+
+
+                <div class="scan-meta">
+
+                    <span>
+                        Scan Time:
+                        <strong id="scan-time">
+                            --
+                        </strong>
+                    </span>
+
+                    <span>
+                        Latency:
+                        <strong id="latency">
+                            --
+                        </strong>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="latest-grid">
+
+
+                <!-- CARD INFORMATION -->
+
+                <div class="card-info">
+
+                    <div class="card-icon">
+                        NFC
+                    </div>
+
+                    <div>
+
+                        <h3 id="card-type">
+                            Waiting for scan...
+                        </h3>
+
+                        <p id="card-family">
+                            --
+                        </p>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>UID</span>
+
+                        <strong id="card-uid">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Reader</span>
+
+                        <strong id="reader-name">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Source File</span>
+
+                        <strong id="source-file">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- VERDICT -->
+
+                <div class="verdict-area">
+
+                    <div
+                        id="verdict-card"
+                        class="verdict-card verdict-unknown"
+                    >
+
+                        <span>
+                            VERDICT
+                        </span>
+
+                        <strong id="verdict">
+                            UNKNOWN
+                        </strong>
+
+                        <p id="verdict-reason">
+                            Waiting for verification result.
+                        </p>
+
+                    </div>
+
+
+                    <div class="baseline-grid">
+
+                        <div>
+
+                            <span>
+                                Active Baseline
+                            </span>
+
+                            <strong id="active-baseline">
+                                --
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Baseline Used
+                            </span>
+
+                            <strong id="baseline-used">
+                                --
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Latest Authorized
+                            </span>
+
+                            <strong id="latest-authorized">
+                                --
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- VERIFICATION LAYERS -->
+
+                <div class="verification-layers">
+
+                    <h3>
+                        Verification Layers
+                    </h3>
+
+
+                    <div class="layer-row">
+
+                        <span>
+                            Application / NDEF
+                        </span>
+
+                        <strong id="layer-application">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="layer-row">
+
+                        <span>
+                            Raw Memory
+                        </span>
+
+                        <strong id="layer-memory">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="layer-row">
+
+                        <span>
+                            Security State
+                        </span>
+
+                        <strong id="layer-security">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================
+             DETAIL PANELS
+        ======================================= -->
+
+        <section class="details-grid">
+
+
+            <!-- TAMPER LOCALIZATION -->
+
+            <article class="panel detail-card">
+
+                <div class="detail-header red">
+
+                    <h3>
+                        Tamper Localization
+                    </h3>
+
+                </div>
+
+
+                <div class="detail-body">
+
+                    <div class="info-row">
+
+                        <span>Sector</span>
+
+                        <strong id="tamper-sector">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Block / Page</span>
+
+                        <strong id="tamper-unit">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Type</span>
+
+                        <strong id="tamper-type">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Region</span>
+
+                        <strong id="tamper-region">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Classification</span>
+
+                        <strong id="tamper-classification">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- CHANGED VALUES -->
+
+            <article class="panel detail-card">
+
+                <div class="detail-header blue">
+
+                    <h3>
+                        Changed Values
+                    </h3>
+
+                </div>
+
+
+                <div class="detail-body">
+
+                    <label>
+                        Trusted Baseline Value
+                    </label>
+
+                    <div
+                        id="old-value"
+                        class="value-box"
+                    >
+                        No confirmed change
+                    </div>
+
+
+                    <label>
+                        Current Scanned Value
+                    </label>
+
+                    <div
+                        id="new-value"
+                        class="value-box current-value"
+                    >
+                        No confirmed change
+                    </div>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- JOURNAL + TIME -->
+
+            <article class="panel detail-card">
+
+                <div class="detail-header purple">
+
+                    <h3>
+                        Journal &amp; Time Evidence
+                    </h3>
+
+                </div>
+
+
+                <div class="detail-body">
+
+                    <div class="info-row">
+
+                        <span>Journal Status</span>
+
+                        <strong id="journal-status">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Rollback Detected</span>
+
+                        <strong id="rollback-detected">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Matched Older Version</span>
+
+                        <strong id="rollback-version">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Time Evidence</span>
+
+                        <strong id="time-status">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>Last Known Valid</span>
+
+                        <strong id="last-valid-time">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>First Detected Modified</span>
+
+                        <strong id="first-modified-time">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- ======================================
+             MEMORY + RECENT SCANS
+        ======================================= -->
+
+        <section class="lower-grid">
+
+
+            <!-- MEMORY CHANGES -->
+
+            <article class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Raw Memory Change Evidence
+                    </h2>
+
+                </div>
+
+
+                <div
+                    id="memory-change-container"
+                    class="memory-container"
+                >
+
+                    <p class="empty-message">
+                        No confirmed raw-memory changes.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- RECENT SCANS -->
+
+            <article class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Recent Scans
+                    </h2>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Time
+                                </th>
+
+                                <th>
+                                    Family
+                                </th>
+
+                                <th>
+                                    UID
+                                </th>
+
+                                <th>
+                                    Verdict
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="recent-scans-body">
+
+                            <tr>
+
+                                <td colspan="4">
+                                    Scan history loading...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- ======================================
+             PRIMARY N3 VERDICT MODEL
+        ======================================= -->
+
+        <section class="verdict-model">
+
+            <div class="model-card valid-model">
+
+                <span>
+                    VALID
+                </span>
+
+                <p>
+                    All required integrity layers
+                    match the active trusted baseline.
+                </p>
+
+            </div>
+
+
+            <div class="model-card modified-model">
+
+                <span>
+                    MODIFIED
+                </span>
+
+                <p>
+                    One or more verification layers
+                    contain a confirmed change.
+                </p>
+
+            </div>
+
+
+            <div class="model-card unknown-model">
+
+                <span>
+                    UNKNOWN
+                </span>
+
+                <p>
+                    The scan does not contain enough
+                    reliable evidence for a definitive verdict.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================
+             FOOTER
+        ======================================= -->
+
+        <footer>
+
+            N3_TIVE —
+            NFC Tag Data Integrity Verification
+            with Tamper Localization
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='js/dashboard.js') }}"
+></script>
+
+<!-- Scan History is isolated from the working dashboard.js -->
+<script
+    src="{{ url_for('static', filename='js/history.js') }}"
+></script>
+
+
+<!-- N3 Baseline Management — read only -->
+<script src="{{ url_for('static', filename='js/baseline.js') }}"></script>
+
+
+<!-- N3 Journal & Audit (read-only) -->
+<script src="{{ url_for('static', filename='js/journal_audit.js') }}"></script>
+
+<!-- N3 Statistics Dashboard (read-only) -->
+<script src="{{ url_for('static', filename='js/statistics.js') }}"></script>
+
+</body>
+
+</html>

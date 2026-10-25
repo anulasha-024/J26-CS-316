@@ -1,4 +1,4 @@
-"""Evaluate saved models on validation sessions. No training or final test scoring."""
+"""Evaluate saved models on validation sessions. No training """
 
 import hashlib
 import json

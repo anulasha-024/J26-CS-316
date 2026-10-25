@@ -1,4 +1,4 @@
-# C2 — Multi-Session Protocol-Response Provenance Fingerprinting
+# C2 - Multi-Session Protocol-Response Provenance Fingerprinting
 
 Owner: Anulasha K.A. · IT23139480
 

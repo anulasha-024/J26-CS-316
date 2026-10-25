@@ -1,4 +1,4 @@
-"""Shared settings for the C2 pilot. This file does not train a model."""
+"""Shared settings for the C2 pilot."""
 
 from pathlib import Path
 

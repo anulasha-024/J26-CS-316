@@ -1,4 +1,4 @@
-"""Build one feature row per card/session. This file does not train ML."""
+"""Build one feature row per card/session."""
 
 import json
 
@@ -21,7 +21,7 @@ FEATURE_NAMES = [
 
 
 def get_command_features(rows, command):
-    """Summarise one command. Failed timings are excluded from timing statistics."""
+    """Failed timings are excluded from timing statistics."""
     elapsed = pd.to_numeric(rows["elapsed_us"], errors="coerce")
     elapsed = elapsed.replace([float("inf"), -float("inf")], float("nan"))
     timings = elapsed[(rows["status"] == "success") & (elapsed > 0)]
@@ -58,7 +58,7 @@ def get_feature_columns():
 
 
 def build_session_features(data):
-    """Combine command summaries into one row per physical source/session."""
+    """Combine command summaries into one row per physical session."""
     fingerprints = []
     for (source, session), session_rows in data.groupby(["physical_source_id", "session_id"]):
         fingerprint = {}
